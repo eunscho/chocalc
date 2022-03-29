@@ -13,7 +13,7 @@ ui <- fluidPage(
                                     accept = c(".csv", ".xls", ".xlsx")),
                           checkboxInput("header", "The first row is the header", TRUE),
                           uiOutput("smpsize_ui"),
-                          ),
+                        ),
                         mainPanel(
                           tableOutput("data_show")
                         )
@@ -26,7 +26,7 @@ ui <- fluidPage(
                           uiOutput("uni_var_ui"),
                           
                           uiOutput("conord_ui"),
-
+                          
                           checkboxGroupInput("point", "Point estimates to obtain",
                                              choiceNames = c(paste( greeks("alpha"), "(tau-equivalent reliability)"),
                                                              paste("standardized ", greeks("alpha")),
@@ -60,7 +60,7 @@ ui <- fluidPage(
                           textOutput("ref"),
                         )
                       )
-              ),
+             ),
              tabPanel("Multidimensional reliability", icon = icon("medium-m"),
                       sidebarLayout(
                         sidebarPanel(
@@ -75,17 +75,16 @@ ui <- fluidPage(
                                                              "Bottom-up approach using PCA reliability",
                                                              "Bifactor reliability",
                                                              "Second-order factors reliability",
-                                                             "Correlated factors reliability",
-                                                             "EFA reliability"),
-                                             selected =  c("rmt", "rmp", "rbmu", "rbc",  "rbpca", "rsof", "rcf"),
-                                             choiceValues = c("rmt", "rmp", "rbmu", "rbc",  "rbpca", "rbf", "rsof", "rcf", "refa"),
+                                                             "Correlated factors reliability"),
+                                             selected =  c("rmt", "rmp", "rbmu", "rbc",  "rbpca", "rbf", "rsof", "rcf"),
+                                             choiceValues = c("rmt", "rmp", "rbmu", "rbc",  "rbpca", "rbf", "rsof", "rcf"),
                                              width = '100%'),
-                          # radioButtons("ifcfa", "CFA model details (model fit and parameter estimates)",
-                          #              choices = c("Yes, please"= "yes",
-                          #                          "No, thanks"= "no"),
-                          #              selected = "no"),
-                          # 
-                          #uiOutput("cfa_choose_ui"),
+                          radioButtons("ifcfa", "CFA model details (model fit and parameter estimates)",
+                                       choices = c("Yes, please"= "yes",
+                                                   "No, thanks"= "no"),
+                                       selected = "no"),
+                          
+                          uiOutput("cfa_choose_ui"),
                           uiOutput("multi_run_ui") 
                         ),
                         mainPanel(
@@ -99,21 +98,21 @@ ui <- fluidPage(
                           tableOutput("show_subtest"),
                           shinycssloaders::withSpinner(tableOutput("multi_table")),
                           uiOutput("multidown1_ui"),
-                          # tableOutput("cfa_fit"),
-                          # tableOutput("cfa_lambda"),
-                          # tableOutput("cfa_theta"),
-                          # tableOutput("cfa_psi"), 
-                          # tableOutput("cfa_beta")
+                          tableOutput("cfa_fit"),
+                          tableOutput("cfa_lambda"),
+                          tableOutput("cfa_theta"),#qq
+                          tableOutput("cfa_psi"), 
+                          tableOutput("cfa_beta")
                         )  
                       )
              ),
-                      
+             
              tabPanel("Frequently asked questions", icon = icon("question-circle"),
                       fluidRow(
                         column(6,
                                h5(strong("Can ChoCalc take covariance data as input?"),
-                                  p("Currently, only unidimensional reliability is possible. ChoCalc automatically recognizes symmetrical input data as covariances. If the first row of the data has the names of items (i.e., the header), then the first column of the data must also have the same name.")
-                                  ),
+                                  p("Currently, only unidimensional reliability is possible.. ChoCalc automatically recognizes symmetrical input data as covariances. If the first row of the data has the names of items (i.e., the header), then the first column of the data must also have the same name.")
+                               ),
                                h5(strong("How does ChoCalc obtain confidence intervals for reliability?"),
                                   p("It obtains the confidence interval for categorical omega using the def option of the package misty to save time. It directly obtains confidence intervals for other reliability estimators using the package boot. Specifically, it uses the bias corrected and accelerated bootstrap interval and performs 1,000 bootstrap replications.")
                                ),
@@ -123,9 +122,9 @@ ui <- fluidPage(
                                h5(strong("How can I contact the author?"),
                                   p("My name is Eunseong Cho from Kwangwoon University in the Republic of Korea. My email is bene[at]kw.ac.kr. Feel free to send bug reports, questions, suggestions, and more.")
                                ),
-                               )
+                        )
                       )
-              )
+             )
   )
 )
 
@@ -450,11 +449,6 @@ server <- function(input, output, session) {
       omegah[count] <- NA
       count <- count + 1
     }
-    if ("refa" %in% choices) {
-      rel[count] <- psych::omega(dat, dim)$omega.tot
-      sub_rel[count, ] <- rep(NA, dim)
-      omegah[count] <- NA
-    }
     out <- list(rel = rel, sub_rel = sub_rel, omegah = omegah)
     return(out)
   }
@@ -594,7 +588,7 @@ server <- function(input, output, session) {
     } else {# NA for non-convergent solutions
       out <- NA
     }
-
+    
     invisible(out)
   }
   ##########################################################################
@@ -753,7 +747,7 @@ server <- function(input, output, session) {
     }
     invisible(out)
   }
-
+  
   ##########################################################################
   # Names
   ##########################################################################
@@ -772,24 +766,22 @@ server <- function(input, output, session) {
                    "Bottom-up approach using PCA reliability",
                    "Bifactor reliability",
                    "Second-order factors reliability",
-                   "Correlated factors reliability",
-                   "EFA reliability")
+                   "Correlated factors reliability")
   
   con_shorts <- c("alpha",
-                 "std_alpha",
-                 "mu",
-                 "std_mu",
-                 "cr",
-                 "std_cr",
-                 "pca")
+                  "std_alpha",
+                  "mu",
+                  "std_mu",
+                  "cr",
+                  "std_cr",
+                  "pca")
   ord_shorts <- c(con_shorts, "cat")
-  multi_shorts <- c("rmt", "rmp", "rbmu", "rbc", "rbpca", "rbf", "rsof", "rcf", "refa")
+  multi_shorts <- c("rmt", "rmp", "rbmu", "rbc", "rbpca", "rbf", "rsof", "rcf")
   
   con_def <-  c("std_mu",
-                    "std_cr",
-                    "pca")
+                "std_cr",
+                "pca")
   ord_def <- c(con_def, "cat")
-  multi_def <- c("rmt", "rmp", "rbmu", "rbc", "rbpca", "rbf", "rsof")
   ##########################################################################
   # Open data
   ##########################################################################
@@ -1033,39 +1025,44 @@ server <- function(input, output, session) {
     subname <- vector("character", ndim)
     calc <- get_multi(input$multi_choice, data(), until)
     multi <- data.frame("estimator" = find_name(input$multi_choice, multi_shorts, multi_names),
-                      "Test reliability" = calc$rel,
-                      "omega hierarchical" = calc$omegah)
+                        "Test reliability" = calc$rel,
+                        "omega hierarchical" = calc$omegah)
     for (i in 1:ndim) {
       #subname[i] <- paste(colnames(data())[grp_start[i]], "etc")
       subname[i] <- paste("subtest", i)
       multi[, subname[i]] <- calc$sub_rel[, i]
     }
     # fit indices
-    # if (input$cfa_choose == "bf") {
-    #   cfaout <- bifactor(data(), until = until)
-    #   facnames <- c("general factor", paste0("subtest", 1:ndim))
-    #   beta <- NULL
-    # } else if (input$cfa_choose == "sof") {
-    #   cfaout <- second_order(data(), until = until)
-    #   facnames <- c(paste0("subtest", 1:ndim), "second-order factor")
-    #   colnames(cfaout$est$beta) <- facnames
-    #   beta <- data.frame("Factors" = facnames, cfaout$est$beta)
-    # } else {
-    #   cfaout <- correlated_factors(data(), until = until)
-    #   facnames <- paste0("subtest", 1:ndim)
-    #   beta <- NULL
-    # }
-    # colnames(cfaout$est$lambda) <- colnames(cfaout$est$psi) <- facnames
-    # loc <- c(1, 2, 3, 4, 5, 9, 10, 23)
-    # fitname <- names(cfaout$fit)[loc]
-    # fitnumber <- cfaout$fit[loc]
-    # fit <- data.frame("Fit indices" = fitname, "output" = fitnumber)
-    # lambda <- data.frame("Items" = colnames(data()), cfaout$est$lambda)
-    # theta <- data.frame("Items" = colnames(data()),
-    #                     "Error variance" = diag(cfaout$est$theta))
-    # psi <- data.frame("Factors" = facnames, cfaout$est$psi)
-    out <- list(multi = multi)
-                # , fit = fit, lambda = lambda, theta = theta, psi = psi, beta = beta)
+    if (input$ifcfa == "yes") {
+      if (input$cfa_choose == "bf") {
+        cfaout <- bifactor(data(), until = until)
+        facnames <- c("general factor", paste0("subtest", 1:ndim))
+        beta <- NULL
+      } else if (input$cfa_choose == "sof") {
+        cfaout <- second_order(data(), until = until)
+        facnames <- c(paste0("subtest", 1:ndim), "second-order factor")
+        colnames(cfaout$est$beta) <- facnames
+        beta <- data.frame("Factors" = facnames, cfaout$est$beta)
+      } else {
+        cfaout <- correlated_factors(data(), until = until)
+        facnames <- paste0("subtest", 1:ndim)
+        beta <- NULL
+      }
+      colnames(cfaout$est$lambda) <- colnames(cfaout$est$psi) <- facnames
+      loc <- c(1, 2, 3, 4, 5, 9, 10, 23)
+      fitname <- names(cfaout$fit)[loc]
+      fitnumber <- cfaout$fit[loc]
+      fit <- data.frame("Fit indices" = fitname, "output" = fitnumber)
+      lambda <- data.frame("Items" = colnames(data()), cfaout$est$lambda)
+      theta <- data.frame("Items" = colnames(data()),
+                          "Error variance" = diag(cfaout$est$theta))
+      psi <- data.frame("Factors" = facnames, cfaout$est$psi)
+    } else {
+      fit <- lambda <- theta <- psi <- beta <- NA
+    }
+    
+    
+    out <- list(multi = multi, fit = fit, lambda = lambda, theta = theta, psi = psi, beta = beta)
     return(out)
   })
   output$multi_table <- renderTable({
@@ -1083,50 +1080,50 @@ server <- function(input, output, session) {
       paste0("multirel_out.csv")
     },
     content = function(file) {
-      write.csv(multi_estimate(), file)
+      write.csv(multi_estimate()$multi, file)
     }
   )
-  # output$cfa_choose_ui <- renderUI({
-  #   req(input$ifcfa == "yes")
-  #   selectInput("cfa_choose", 
-  #               label = "Which CFA model to show",
-  #               choices = c("Bifactor model" = "bf",
-  #                           "Second-order factor model" = "sof",
-  #                           "Correlated factors model" = "cf"),
-  #               selected = "bf")
-  # })
-  # output$cfa_fit <- renderTable({
-  #   req(input$ifcfa == "yes")
-  #   multi_estimate()$fit
-  # }, digits = reactive(input$digit))
-  # output$cfa_lambda <- renderTable({
-  #   req(input$ifcfa == "yes")
-  #   multi_estimate()$lambda
-  # }, digits = reactive(input$digit),
-  #   caption=paste("Factor loadings (lambda, coefficients between factors and items)"),
-  #   caption.placement = getOption("xtable.caption.placement", "top")
-  # )
-  # output$cfa_theta <- renderTable({
-  #   req(input$ifcfa == "yes")
-  #   multi_estimate()$theta
-  # }, digits = reactive(input$digit),
-  # caption=paste("Item error variance (theta)"),
-  # caption.placement = getOption("xtable.caption.placement", "top")
-  # )
-  # output$cfa_psi <- renderTable({
-  #   req(input$ifcfa == "yes")
-  #   multi_estimate()$psi
-  # }, digits = reactive(input$digit),
-  # caption=paste("Covariances of factors (psi)"),
-  # caption.placement = getOption("xtable.caption.placement", "top")
-  # )
-  # output$cfa_beta <- renderTable({
-  #   req(input$ifcfa == "yes" & input$cfa_choose == "sof")
-  #   multi_estimate()$beta
-  # }, digits = reactive(input$digit),
-  # caption=paste("Coefficients between factors (beta)"),
-  # caption.placement = getOption("xtable.caption.placement", "top")
-  # )
+  output$cfa_choose_ui <- renderUI({
+    req(input$ifcfa == "yes")
+    selectInput("cfa_choose", 
+                label = "Which CFA model to show",
+                choices = c("Bifactor model" = "bf",
+                            "Second-order factor model" = "sof",
+                            "Correlated factors model" = "cf"),
+                selected = "bf")
+  })
+  output$cfa_fit <- renderTable({
+    req(input$ifcfa == "yes")
+    multi_estimate()$fit
+  }, digits = reactive(input$digit))
+  output$cfa_lambda <- renderTable({
+    req(input$ifcfa == "yes")
+    multi_estimate()$lambda
+  }, digits = reactive(input$digit),
+  caption=paste("Factor loadings (lambda, coefficients between factors and items)"),
+  caption.placement = getOption("xtable.caption.placement", "top")
+  )
+  output$cfa_theta <- renderTable({
+    req(input$ifcfa == "yes")
+    multi_estimate()$theta
+  }, digits = reactive(input$digit),
+  caption=paste("Item error variance (theta)"),
+  caption.placement = getOption("xtable.caption.placement", "top")
+  )
+  output$cfa_psi <- renderTable({
+    req(input$ifcfa == "yes")
+    multi_estimate()$psi
+  }, digits = reactive(input$digit),
+  caption=paste("Covariances of factors (psi)"),
+  caption.placement = getOption("xtable.caption.placement", "top")
+  )
+  output$cfa_beta <- renderTable({
+    req(input$ifcfa == "yes" & input$cfa_choose == "sof")
+    multi_estimate()$beta
+  }, digits = reactive(input$digit),
+  caption=paste("Coefficients between factors (beta)"),
+  caption.placement = getOption("xtable.caption.placement", "top")
+  )
 }
 
 shinyApp(ui = ui, server = server)

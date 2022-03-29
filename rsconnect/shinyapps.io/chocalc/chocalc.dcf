@@ -1,0 +1,13 @@
+name: chocalc
+title: chocalc
+username:
+account: chocalc
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5453053
+bundleId: 5739311
+url: https://chocalc.shinyapps.io/ChoCalc/
+when: 1648544124.89172
+lastSyncTime: 1648544124.89172
+asMultiple: FALSE
+asStatic: FALSE
