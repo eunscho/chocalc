@@ -13,6 +13,8 @@ ui <- fluidPage(
                                     accept = c(".csv", ".xls", ".xlsx")),
                           checkboxInput("header", "The first row is the header", TRUE),
                           uiOutput("smpsize_ui"),
+                          sliderInput("digit", "Number of digits in result display", min = 2, max = 6, value = 3),
+                          
                         ),
                         mainPanel(
                           tableOutput("data_show")
@@ -47,8 +49,6 @@ ui <- fluidPage(
                                        selected = "no"),
                           
                           uiOutput("ifdrop_detail_ui"),
-                          
-                          sliderInput("digit", "Display digits", min = 2, max = 6, value = 3),
                           
                           uiOutput("uni_run_ui") 
                         ),
